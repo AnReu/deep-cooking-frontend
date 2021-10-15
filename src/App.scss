@@ -1,0 +1,55 @@
+.app-background {
+  position: fixed;
+  top: -1rem;
+  left: -1rem;
+  bottom: -1rem;
+  right: -1rem;
+  z-index: 0;
+
+  background-image: url(./background.jpg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  filter: blur(7px);
+}
+
+.app {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100%;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  width: 96vw;
+  max-width: 40rem;
+  padding: 2rem 0;
+}
+
+.app-title {
+  display: block;
+  font-size: 1.4rem;
+  line-height: 2rem;
+  font-weight: 400;
+  text-align: center;
+  text-shadow: 0 0 3px white;
+}
+.app-subtitle {
+  display: block;
+  text-align: center;
+  line-height: 1.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 3px white;
+}
+
+@media only screen and (min-width: 600px) {
+  .app-container {
+    width: 80%;
+  }
+}
