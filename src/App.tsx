@@ -17,17 +17,28 @@ export default function App() {
   }, []);
 
   const toggleTag = (
-    tag: string,
+    tag: string | string[],
     selectedTags: string[],
     setSelectedTags: (tags: string[]) => void
   ) => {
     let copy = selectedTags.slice();
 
-    let index = selectedTags.indexOf(tag);
-    if (index >= 0) {
-      copy.splice(index, 1);
+    if (Array.isArray(tag)) {
+      for (let t of tag) {
+        let index = copy.indexOf(t);
+        if (index >= 0) {
+          copy.splice(index, 1);
+        } else {
+          copy.push(t);
+        }
+      }
     } else {
-      copy.push(tag);
+      let index = copy.indexOf(tag);
+      if (index >= 0) {
+        copy.splice(index, 1);
+      } else {
+        copy.push(tag);
+      }
     }
 
     setSelectedTags(copy);

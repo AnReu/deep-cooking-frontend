@@ -1,5 +1,5 @@
 import React, { KeyboardEvent, useEffect, useState, MouseEvent } from 'react';
-import { MdCancel } from 'react-icons/md';
+import { MdCancel, MdClear } from 'react-icons/md';
 import { default as levenshtein } from 'damerau-levenshtein';
 import './TagInput.scss';
 
@@ -17,7 +17,7 @@ function TagInputTag(props: { tag: string; onRemove: () => void }) {
 export default function TagInput(props: {
   selectedTags: string[];
   availableTags: string[];
-  onToggleTag: (tag: string) => void;
+  onToggleTag: (tag: string | string[]) => void;
   onAction: () => void;
 }) {
   let [inputValue, setInputValue] = useState('');
@@ -118,6 +118,11 @@ export default function TagInput(props: {
     props.onAction();
   };
 
+  const onClear = () => {
+    setInputValue('');
+    props.onToggleTag(props.selectedTags);
+  };
+
   let tags = props.selectedTags.map((tag) => (
     <TagInputTag key={tag} tag={tag} onRemove={() => props.onToggleTag(tag)} />
   ));
@@ -156,6 +161,9 @@ export default function TagInput(props: {
             onKeyDown={onKeyDown}
             onChange={(e) => setInputValue(e.target.value)}
           />
+          <div className="tag-input-clear" onClick={onClear}>
+            <MdClear />
+          </div>
         </div>
         <button className="tag-input-action" onClick={onAction}>
           Rezept generieren

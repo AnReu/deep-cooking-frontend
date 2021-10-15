@@ -19,11 +19,30 @@
 }
 
 .tag-input-box {
+  position: relative;
   background-color: var(--primary-background);
   line-height: 1.8rem;
   padding: 0.4rem 1rem;
+  padding-right: 2rem;
   display: flex;
   flex-wrap: wrap;
+}
+
+.tag-input-clear {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 2rem;
+  padding-right: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.4;
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .tag-input-tag {
