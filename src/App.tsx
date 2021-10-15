@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { BASE_URL } from '.';
 import './App.scss';
 import Recipe from './Recipe';
 import TagInput from './TagInput';
@@ -11,7 +10,7 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      let request = await fetch(BASE_URL + '/api/get_ingredients');
+      let request = await fetch('/api/get_ingredients/');
       let json = await request.json();
       setAvailableTags(json);
     })();

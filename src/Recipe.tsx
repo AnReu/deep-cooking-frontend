@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { MdClose } from 'react-icons/md';
-import { BASE_URL } from '.';
 import './Recipe.scss';
 
 export default function Recipe(props: {
@@ -15,9 +14,7 @@ export default function Recipe(props: {
       setIsLoading(true);
       (async () => {
         let request = await fetch(
-          BASE_URL +
-            '/api/get_recipe/?ingredients=' +
-            props.selectedTags.join('|')
+          '/api/get_recipe/?ingredients=' + props.selectedTags.join('|')
         );
         let text = await request.json();
         setContent(text);
