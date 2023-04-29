@@ -1,11 +1,74 @@
 import React, { useEffect, useState } from 'react';
 import { MdClose } from 'react-icons/md';
-import './Recipe.scss';
+import styled from 'styled-components';
 
-export default function Recipe(props: {
-  selectedTags: string[];
-  onClose: () => void;
-}) {
+const StyledRecipe = styled.div`
+  background-color: var(--primary-background);
+  border: solid 1px var(--border-color);
+  border-radius: 0.2rem;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+
+  max-height: 50rem;
+  opacity: 1;
+
+  transition: max-height 0.4s, opacity 0.4s;
+
+  &.hidden {
+    max-height: 0;
+    opacity: 0;
+  }
+`;
+
+const StyledRecipeHeader = styled.div`
+  position: relative;
+  line-height: 3rem;
+  padding: 0 1rem;
+  background-color: var(--tertiary-background);
+
+  div {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 3.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.4;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+`;
+
+const StyledRecipeBody = styled.div`
+  min-height: 10rem;
+  padding: 1rem;
+  white-space: pre-line;
+`;
+
+const StyledRecipeLoading = styled.div`
+  min-height: 10rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  span {
+    display: block;
+    width: 6rem;
+    height: 6rem;
+    border: solid 0.3rem transparent;
+    border-left-color: var(--theme-color);
+    border-radius: 100%;
+    animation: rotate 800ms infinite linear;
+  }
+`;
+
+export function Recipe(props: { selectedTags: string[]; onClose: () => void }) {
   let [content, setContent] = useState('');
   let [isLoading, setIsLoading] = useState(false);
 
@@ -26,25 +89,23 @@ export default function Recipe(props: {
   let body;
   if (isLoading) {
     body = (
-      <div className="recipe-loading">
+      <StyledRecipeLoading>
         <span></span>
-      </div>
+      </StyledRecipeLoading>
     );
   } else {
-    body = <div className="recipe-body">{content}</div>;
+    body = <StyledRecipeBody>{content}</StyledRecipeBody>;
   }
 
   return (
-    <div
-      className={'recipe' + (props.selectedTags.length <= 0 ? ' hidden' : '')}
-    >
-      <div className="recipe-header">
+    <StyledRecipe className={props.selectedTags.length <= 0 ? ' hidden' : ''}>
+      <StyledRecipeHeader>
         <span>Rezept</span>
         <div onClick={props.onClose}>
           <MdClose />
         </div>
-      </div>
+      </StyledRecipeHeader>
       {body}
-    </div>
+    </StyledRecipe>
   );
 }

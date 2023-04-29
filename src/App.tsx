@@ -1,9 +1,65 @@
 import React, { useEffect, useState } from 'react';
-import './App.scss';
-import Recipe from './Recipe';
-import TagInput from './TagInput';
+import { Recipe } from './Recipe';
+import { TagInput } from './TagInput';
+import styled from 'styled-components';
+import BackgroundImage from './background.png';
 
-export default function App() {
+const StyledAppBackground = styled.div`
+  position: fixed;
+  top: -1rem;
+  left: -1rem;
+  bottom: -1rem;
+  right: -1rem;
+  z-index: 0;
+
+  background-image: url(${BackgroundImage});
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  filter: blur(7px);
+
+  box-shadow: rgba(0, 0, 0, 0.2) 0 0 4px 8px inset;
+`;
+
+const StyledApp = styled.div`
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100%;
+`;
+
+const StyledAppContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 96vw;
+  max-width: 40rem;
+  padding: 2rem 0;
+
+  @media only screen and (min-width: 600px) {
+    width: 80%;
+  }
+`;
+const StyledAppTitle = styled.span`
+  display: block;
+  font-size: 1.4rem;
+  line-height: 2rem;
+  font-weight: 400;
+  text-align: center;
+  text-shadow: 0 0 3px white;
+`;
+const StyledAppSubtitle = styled.span`
+  display: block;
+  text-align: center;
+  line-height: 1.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 3px white;
+`;
+
+export function App() {
   let [availableTags, setAvailableTags] = useState([] as string[]);
   let [selectedTags, setSelectedTags] = useState([] as string[]);
   let [activeTags, setActiveTags] = useState([] as string[]);
@@ -52,13 +108,14 @@ export default function App() {
 
   return (
     <>
-      <div className="app-background"></div>
-      <div className="app">
-        <div className="app-container">
-          <span className="app-title">Welcome to Deep Cooking!</span>
-          <span className="app-subtitle">
-            Gib ein was dir schmeckt und lass dir ein tolles Rezept generieren!
-          </span>
+      <StyledAppBackground></StyledAppBackground>
+      <StyledApp>
+        <StyledAppContainer>
+          <StyledAppTitle>Willkommen auf Deep Cooking!</StyledAppTitle>
+          <StyledAppSubtitle>
+            Gib alle Zutaten ein, die verwendet werden sollen, und lass dir ein
+            tolles Rezept generieren!
+          </StyledAppSubtitle>
           <TagInput
             selectedTags={selectedTags}
             availableTags={availableTags}
@@ -66,8 +123,8 @@ export default function App() {
             onAction={clickButton}
           />
           <Recipe selectedTags={activeTags} onClose={() => setActiveTags([])} />
-        </div>
-      </div>
+        </StyledAppContainer>
+      </StyledApp>
     </>
   );
 }

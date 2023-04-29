@@ -1,20 +1,208 @@
 import React, { KeyboardEvent, useEffect, useState, MouseEvent } from 'react';
 import { MdCancel, MdClear } from 'react-icons/md';
 import { default as levenshtein } from 'damerau-levenshtein';
-import './TagInput.scss';
+import styled from 'styled-components';
+
+const StyledTagInput = styled.label`
+  position: relative;
+  margin-bottom: 1.5rem;
+
+  input {
+    appearance: none;
+    outline: none;
+    border: none;
+    background-color: var(--primary-background);
+    font-size: 1rem;
+    min-width: 0;
+    flex: 1 1;
+    margin: 0.5rem 0;
+  }
+
+  @media only screen and (max-width: 599px) {
+    margin-bottom: 4.6rem;
+  }
+`;
+
+const StyledTagInputGroup = styled.div`
+  display: flex;
+
+  @media only screen and (max-width: 599px) {
+    flex-direction: column;
+
+    &.auto-complete-active .tag-input-box {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+
+  @media only screen and (min-width: 600px) {
+    background-color: var(--primary-background);
+    border: solid 1px var(--border-color);
+    border-radius: 0.2rem;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+
+    &:focus-within {
+      outline: solid 2px var(--theme-color);
+    }
+
+    &.auto-complete-active {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+`;
+
+const StyledTagInputBox = styled.div`
+  position: relative;
+  background-color: var(--primary-background);
+  line-height: 1.8rem;
+  padding: 0.4rem 1rem;
+  padding-right: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+
+  @media only screen and (max-width: 599px) {
+    border: solid 1px var(--border-color);
+    border-radius: 0.2rem;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+
+    &:focus-within {
+      outline: solid 2px var(--theme-color);
+    }
+  }
+
+  @media only screen and (min-width: 600px) {
+    flex: 1 1 auto;
+  }
+`;
+
+const StyledTagInputClear = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 2rem;
+  padding-right: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.4;
+
+  &:hover {
+    opacity: 1;
+  }
+`;
+
+const StyledTagInputTag = styled.div`
+  display: inline-block;
+  position: relative;
+  background-color: var(--tertiary-background);
+  border: solid 1px var(--border-color);
+  margin: 0.2rem;
+  padding-right: 1rem;
+  height: 1.8rem;
+  border-radius: 0.9rem;
+
+  span {
+    padding-left: 0.7rem;
+    padding-right: 0.9rem;
+  }
+
+  div {
+    position: absolute;
+    display: flex;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 2rem;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.4;
+
+    &:hover {
+      opacity: 0.6;
+    }
+  }
+`;
+
+const StyledTagInputAction = styled.button`
+  appearance: none;
+  background-color: var(--primary-background);
+  border: none;
+  line-height: 1.8rem;
+  padding: 0.4rem 1rem;
+
+  @media only screen and (max-width: 599px) {
+    margin-top: 0.4rem;
+    border: solid 1px var(--border-color);
+    border-radius: 0.2rem;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+  }
+
+  @media only screen and (min-width: 600px) {
+    border-left: solid 1px var(--border-color);
+    flex: 0 0 auto;
+    background-color: var(--tertiary-background);
+  }
+`;
+
+const StyledTagInputAutoComplete = styled.div`
+  background-color: var(--primary-background);
+  border: solid 1px var(--border-color);
+  border-top: none;
+  border-bottom-left-radius: 0.2rem;
+  border-bottom-right-radius: 0.2rem;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
+
+  max-height: 20rem;
+  overflow: scroll;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  right: 0;
+  z-index: 5;
+
+  &:empty {
+    display: none;
+  }
+
+  div {
+    padding: 0.4rem 1rem;
+    &:hover {
+      background-color: var(--secondary-hover-background);
+    }
+
+    &.selected {
+      background-color: var(--secondary-background);
+      &:hover {
+        background-color: var(--tertiary-hover-background);
+      }
+    }
+  }
+`;
 
 function TagInputTag(props: { tag: string; onRemove: () => void }) {
   return (
-    <div className="tag-input-tag">
+    <StyledTagInputTag>
       <span>{props.tag}</span>
       <div onClick={() => props.onRemove()}>
         <MdCancel />
       </div>
-    </div>
+    </StyledTagInputTag>
   );
 }
 
-export default function TagInput(props: {
+export function TagInput(props: {
   selectedTags: string[];
   availableTags: string[];
   onToggleTag: (tag: string | string[]) => void;
@@ -145,14 +333,13 @@ export default function TagInput(props: {
   });
 
   return (
-    <label htmlFor="tag-input" className="tag-input">
-      <div
+    <StyledTagInput htmlFor="tag-input">
+      <StyledTagInputGroup
         className={
-          'tag-input-group' +
-          (autoCompleteEntries.length > 0 ? ' auto-complete-active' : '')
+          autoCompleteEntries.length > 0 ? ' auto-complete-active' : ''
         }
       >
-        <div className="tag-input-box">
+        <StyledTagInputBox>
           {tags}
           <input
             id="tag-input"
@@ -161,16 +348,18 @@ export default function TagInput(props: {
             onKeyDown={onKeyDown}
             onChange={(e) => setInputValue(e.target.value)}
           />
-          <div className="tag-input-clear" onClick={onClear}>
+          <StyledTagInputClear onClick={onClear}>
             <MdClear />
-          </div>
-        </div>
-        <button className="tag-input-action" onClick={onAction}>
+          </StyledTagInputClear>
+        </StyledTagInputBox>
+        <StyledTagInputAction onClick={onAction}>
           Rezept generieren
-        </button>
-      </div>
+        </StyledTagInputAction>
+      </StyledTagInputGroup>
 
-      <div className="tag-input-auto-complete">{autoCompleteEntries}</div>
-    </label>
+      <StyledTagInputAutoComplete>
+        {autoCompleteEntries}
+      </StyledTagInputAutoComplete>
+    </StyledTagInput>
   );
 }
