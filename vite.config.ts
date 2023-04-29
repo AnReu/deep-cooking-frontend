@@ -7,6 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'https://deep.cooking',
+      '/api_v2': 'https://deep.cooking',
     },
   },
 });
