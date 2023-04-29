@@ -93,6 +93,7 @@ const StyledTagInput = styled.label`
     min-width: 0;
     width: 100%;
     margin: 0.5rem 0;
+    padding: 0 0.5rem;
     text-align: center;
   }
 
@@ -174,6 +175,7 @@ function AutoCompleteInput(props: {
   setValue: (row: string) => void;
   options: string[];
   disableFilter?: boolean;
+  placeholder: string;
 }) {
   let inputId = React.useId();
   let [selectedAutoComplete, setSelectedAutoComplete] = React.useState(0);
@@ -289,6 +291,7 @@ function AutoCompleteInput(props: {
           onKeyDown={onKeyDown}
           autoComplete="off"
           onChange={(e) => props.setValue(e.target.value)}
+          placeholder={props.placeholder}
         />
       </StyledTagInputGroup>
 
@@ -341,23 +344,27 @@ function RecipeRow(props: {
         value={props.row.ingredient}
         setValue={setIngredient}
         options={props.ingredients.map((i) => i.name)}
+        placeholder="Zutat"
       />
       <AutoCompleteInput
         value={props.row.option}
         setValue={setOption}
         options={['<free>', '<exact>', '<max>']}
         disableFilter
+        placeholder="Verwendung"
       />
       <AutoCompleteInput
         value={props.row.unit}
         setValue={setUnit}
         options={foundIngredient?.units ?? props.units}
         disableFilter={!!foundIngredient}
+        placeholder="Einheit"
       />
       <AutoCompleteInput
         value={props.row.amount}
         setValue={setAmount}
         options={[]}
+        placeholder="Menge"
       />
       <StyledTagInputAction onClick={props.onAction}>
         {props.mode === 'add' ? <MdAdd /> : <MdDeleteOutline />}

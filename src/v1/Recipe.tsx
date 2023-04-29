@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MdClose } from 'react-icons/md';
+import { MdClose, MdErrorOutline } from 'react-icons/md';
 import styled from 'styled-components';
 
 const StyledRecipe = styled.div`
@@ -68,20 +68,40 @@ const StyledRecipeLoading = styled.div`
   }
 `;
 
+const StyledRecipeError = styled.div`
+  min-height: 10rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 8rem;
+  color: var(--error-color);
+`;
+
 export function Recipe(props: { selectedTags: string[]; onClose: () => void }) {
   let [content, setContent] = useState('');
   let [isLoading, setIsLoading] = useState(false);
+  let [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     if (props.selectedTags.length > 0) {
       setIsLoading(true);
+      setHasError(false);
       (async () => {
-        let request = await fetch(
-          '/api/get_recipe/?ingredients=' + props.selectedTags.join('|')
-        );
-        let text = await request.json();
-        setContent(text);
-        setIsLoading(false);
+        try {
+          let request = await fetch(
+            '/api/get_recipe/?ingredients=' + props.selectedTags.join('|')
+          );
+          let text = await request.json();
+          setContent(text);
+          setIsLoading(false);
+        } catch (e) {
+          console.error(e);
+          setContent('');
+          setIsLoading(false);
+          setHasError(true);
+        }
       })();
     }
   }, [props.selectedTags]);
@@ -92,6 +112,12 @@ export function Recipe(props: { selectedTags: string[]; onClose: () => void }) {
       <StyledRecipeLoading>
         <span></span>
       </StyledRecipeLoading>
+    );
+  } else if (hasError) {
+    body = (
+      <StyledRecipeError>
+        <MdErrorOutline />
+      </StyledRecipeError>
     );
   } else {
     body = <StyledRecipeBody>{content}</StyledRecipeBody>;

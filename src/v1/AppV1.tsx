@@ -1,34 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Recipe } from './Recipe';
 import { TagInput } from './TagInput';
-import styled from 'styled-components';
-
-const StyledAppContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 96vw;
-  max-width: 40rem;
-  padding: 2rem 0;
-
-  @media only screen and (min-width: 600px) {
-    width: 80%;
-  }
-`;
-const StyledAppTitle = styled.span`
-  display: block;
-  font-size: 1.4rem;
-  line-height: 2rem;
-  font-weight: 400;
-  text-align: center;
-  text-shadow: 0 0 3px white;
-`;
-const StyledAppSubtitle = styled.span`
-  display: block;
-  text-align: center;
-  line-height: 1.5rem;
-  margin-bottom: 1rem;
-  text-shadow: 0 0 3px white;
-`;
 
 export function AppV1() {
   let [availableTags, setAvailableTags] = useState([] as string[]);
@@ -78,12 +50,7 @@ export function AppV1() {
   };
 
   return (
-    <StyledAppContainer>
-      <StyledAppTitle>Willkommen auf Deep Cooking!</StyledAppTitle>
-      <StyledAppSubtitle>
-        Gib alle Zutaten ein, die verwendet werden sollen, und lass dir ein
-        tolles Rezept generieren!
-      </StyledAppSubtitle>
+    <>
       <TagInput
         selectedTags={selectedTags}
         availableTags={availableTags}
@@ -91,6 +58,6 @@ export function AppV1() {
         onAction={clickButton}
       />
       <Recipe selectedTags={activeTags} onClose={() => setActiveTags([])} />
-    </StyledAppContainer>
+    </>
   );
 }
