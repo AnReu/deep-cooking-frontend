@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import BackgroundImage from './background.png';
 import { AppV1 } from './v1/AppV1';
+import { AppV2 } from './v2/AppV2';
 
 const StyledAppBackground = styled.div`
   position: fixed;
@@ -36,7 +37,7 @@ export function App() {
     <>
       <StyledAppBackground></StyledAppBackground>
       <StyledApp>
-        <AppV1 />
+        <AppV2 />
       </StyledApp>
     </>
   );
