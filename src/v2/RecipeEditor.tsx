@@ -6,10 +6,27 @@ import {
 import React, { KeyboardEvent } from 'react';
 import { default as levenshtein } from 'damerau-levenshtein';
 import styled from 'styled-components';
+import { MdAdd, MdDeleteOutline } from 'react-icons/md';
 
 const StyledRow = styled.div`
   display: flex;
   position: relative;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  border-radius: 0.2rem;
+  margin-bottom: 0.2rem;
+
+  &:nth-child(even)::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.069;
+    pointer-events: none;
+  }
 
   & > label:first-of-type {
     flex-grow: 1;
@@ -17,46 +34,6 @@ const StyledRow = styled.div`
 
   & > label:not(:first-of-type) {
     width: 20%;
-  }
-`;
-
-const StyledTagInput = styled.label`
-  position: relative;
-  display: block;
-  z-index: 0;
-
-  input {
-    position: relative;
-    appearance: none;
-    outline: none;
-    border: none;
-    background-color: var(--primary-background);
-    font-size: 1rem;
-    min-width: 0;
-    width: 100%;
-    margin: 0.5rem 0;
-
-    border-top-left-radius: 0.2rem;
-    border-top-right-radius: 0.2rem;
-  }
-
-  &:focus-within {
-    z-index: 1;
-  }
-`;
-
-const StyledTagInputGroup = styled.div`
-  display: flex;
-
-  background-color: var(--primary-background);
-  border: solid 1px var(--border-color);
-  border-radius: 0.2rem;
-  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
-    0 1px 5px 0 rgba(0, 0, 0, 0.12);
-  overflow: hidden;
-
-  &:focus-within {
-    outline: solid 2px var(--theme-color);
   }
 `;
 
@@ -97,6 +74,67 @@ const StyledTagInputAutoComplete = styled.div`
       }
     }
   }
+`;
+
+const StyledTagInput = styled.label`
+  position: relative;
+  display: block;
+  z-index: 0;
+
+  input {
+    position: relative;
+    appearance: none;
+    outline: none;
+    border: none;
+    background-color: var(--primary-background);
+    font-size: 1rem;
+    min-width: 0;
+    width: 100%;
+    margin: 0.5rem 0;
+    text-align: center;
+  }
+
+  &:focus-within {
+    z-index: 1;
+  }
+
+  &:not(:focus-within) ${StyledTagInputAutoComplete} {
+    display: none;
+  }
+
+  &:first-of-type > div:first-of-type {
+    border-bottom-left-radius: 0.2rem;
+    border-top-left-radius: 0.2rem;
+  }
+`;
+
+const StyledTagInputGroup = styled.div`
+  display: flex;
+
+  background-color: var(--primary-background);
+  border: solid 1px var(--border-color);
+  overflow: hidden;
+  margin-right: -1px;
+
+  &:focus-within {
+    outline: solid 2px var(--theme-color);
+  }
+`;
+
+const StyledTagInputAction = styled.button`
+  appearance: none;
+  padding: 0.4rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+
+  border: solid 1px var(--border-color);
+  flex: 0 0 auto;
+  background-color: var(--tertiary-background);
+
+  border-bottom-right-radius: 0.2rem;
+  border-top-right-radius: 0.2rem;
 `;
 
 function AutoCompleteInput(props: {
@@ -210,6 +248,7 @@ function AutoCompleteInput(props: {
           name={inputId}
           value={props.value}
           onKeyDown={onKeyDown}
+          autoComplete="off"
           onChange={(e) => props.setValue(e.target.value)}
         />
       </StyledTagInputGroup>
@@ -276,7 +315,9 @@ function RecipeRow(props: {
         setValue={setAmount}
         options={[]}
       />
-      <button onClick={props.onAction}>{props.mode}</button>
+      <StyledTagInputAction onClick={props.onAction}>
+        {props.mode === 'add' ? <MdAdd /> : <MdDeleteOutline />}
+      </StyledTagInputAction>
     </StyledRow>
   );
 }
