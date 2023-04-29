@@ -135,12 +135,43 @@ const StyledTagInputAction = styled.button`
 
   border-bottom-right-radius: 0.2rem;
   border-top-right-radius: 0.2rem;
+
+  svg {
+    opacity: 0.6;
+  }
+
+  &:hover {
+    background-color: var(--tertiary-hover-background);
+  }
 `;
 
+const StyledTagAction = styled.button`
+  appearance: none;
+  padding: 0.4rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.1rem;
+  width: 100%;
+  line-height: 2.4rem;
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
+
+  border: solid 1px var(--border-color);
+  flex: 0 0 auto;
+  background-color: var(--secondary-background);
+
+  border-radius: 0.2rem;
+
+  &:hover {
+    background-color: var(--secondary-hover-background);
+  }
+`;
 function AutoCompleteInput(props: {
   value: string;
   setValue: (row: string) => void;
   options: string[];
+  disableFilter?: boolean;
 }) {
   let inputId = React.useId();
   let [selectedAutoComplete, setSelectedAutoComplete] = React.useState(0);
@@ -179,7 +210,7 @@ function AutoCompleteInput(props: {
             selected: false,
           };
         })
-        .filter((tag) => tag.match > 0);
+        .filter((tag) => tag.match > 0 || props.disableFilter);
       list.sort((a, b) => b.match - a.match);
 
       if (selectedAutoComplete < list.length) {
@@ -304,6 +335,7 @@ function RecipeRow(props: {
         value={props.row.option}
         setValue={setOption}
         options={['<free>', '<exact>', '<max>']}
+        disableFilter
       />
       <AutoCompleteInput
         value={props.row.unit}
@@ -350,7 +382,8 @@ export function RecipeEditor(props: {
     };
 
     const handleRemoveClick = () => {
-      const ingredients = props.recipeOptions.ingredients.splice(index, 1);
+      const ingredients = [...props.recipeOptions.ingredients];
+      ingredients.splice(index, 1);
 
       props.setRecipeOptions({
         ingredients: ingredients,
@@ -400,7 +433,9 @@ export function RecipeEditor(props: {
         mode="add"
         onAction={handleAddClick}
       />
-      <button onClick={props.onAction}>Generate</button>
+      <StyledTagAction onClick={props.onAction}>
+        Rezept generieren
+      </StyledTagAction>
     </div>
   );
 }

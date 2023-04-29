@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MdClose } from 'react-icons/md';
+import { MdClose, MdErrorOutline } from 'react-icons/md';
 import styled from 'styled-components';
 import { GeneratedRecipe, RecipeOptions } from './types';
 
@@ -69,16 +69,29 @@ const StyledRecipeLoading = styled.div`
   }
 `;
 
+const StyledRecipeError = styled.div`
+  min-height: 10rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 8rem;
+  color: var(--error-color);
+`;
+
 export function Recipe(props: {
   recipe: RecipeOptions | null;
   onClose: () => void;
 }) {
   let [content, setContent] = useState(null as GeneratedRecipe | null);
   let [isLoading, setIsLoading] = useState(false);
+  let [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     if (props.recipe && props.recipe.ingredients.length > 0) {
       setIsLoading(true);
+      setHasError(false);
       (async () => {
         let params =
           props.recipe?.ingredients
@@ -91,12 +104,20 @@ export function Recipe(props: {
                 i.option,
               ].join('|');
             }) ?? [];
-        let request = await fetch(
-          '/api_v2/get_recipe/?ingredients=' + params.join('@@')
-        );
-        let recipe = await request.json();
-        setContent(recipe);
-        setIsLoading(false);
+
+        try {
+          let request = await fetch(
+            '/api_v2/get_recipe/?ingredients=' + params.join('@@')
+          );
+          let recipe = await request.json();
+          setContent(recipe);
+          setIsLoading(false);
+        } catch (e) {
+          console.error(e);
+          setContent(null);
+          setIsLoading(false);
+          setHasError(true);
+        }
       })();
     }
   }, [props.recipe]);
@@ -107,6 +128,12 @@ export function Recipe(props: {
       <StyledRecipeLoading>
         <span></span>
       </StyledRecipeLoading>
+    );
+  } else if (hasError) {
+    body = (
+      <StyledRecipeError>
+        <MdErrorOutline />
+      </StyledRecipeError>
     );
   } else {
     body = (
