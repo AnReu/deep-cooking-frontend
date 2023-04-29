@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Recipe } from './Recipe';
 import styled from 'styled-components';
-import { RecipeOptions } from './types';
+import { IngredientWithUnits, RecipeOptions } from './types';
 import { RecipeEditor } from './RecipeEditor';
 
 const StyledAppContainer = styled.div`
@@ -32,7 +32,7 @@ const StyledAppSubtitle = styled.span`
 `;
 
 export function AppV2() {
-  let [ingredients, setIngredients] = useState([] as string[]);
+  let [ingredients, setIngredients] = useState([] as IngredientWithUnits[]);
   let [units, setUnits] = useState([] as string[]);
   let [recipeOptions, setRecipeOptions] = useState({
     ingredients: [],
@@ -42,9 +42,18 @@ export function AppV2() {
 
   useEffect(() => {
     (async () => {
-      let request = await fetch('/api_v2/get_ingredients/');
+      let request = await fetch('/api_v2/get_ingredients_with_units/');
       let json = await request.json();
-      setIngredients(json);
+
+      let newIngredients: IngredientWithUnits[] = [];
+      for (let key of Object.keys(json)) {
+        newIngredients.push({
+          name: key,
+          units: json[key],
+        });
+      }
+
+      setIngredients(newIngredients);
     })();
   }, []);
   useEffect(() => {

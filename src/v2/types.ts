@@ -17,3 +17,8 @@ export type GeneratedRecipe = {
   name: string;
   preparation: string;
 };
+
+export type IngredientWithUnits = {
+  name: string;
+  units: string[];
+};

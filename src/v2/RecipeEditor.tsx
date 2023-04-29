@@ -1,4 +1,5 @@
 import {
+  IngredientWithUnits,
   RecipeIngredient,
   RecipeIngredientOption,
   RecipeOptions,
@@ -24,7 +25,7 @@ const StyledRow = styled.div`
     width: 100%;
     height: 100%;
     background-color: black;
-    opacity: 0.069;
+    opacity: 0.055;
     pointer-events: none;
   }
 
@@ -61,6 +62,7 @@ const StyledTagInputAutoComplete = styled.div`
 
   div {
     padding: 0.4rem 1rem;
+    line-height: 1rem;
 
     &:hover {
       background-color: var(--secondary-hover-background);
@@ -191,7 +193,7 @@ function AutoCompleteInput(props: {
 
   React.useEffect(() => {
     let lowerCaseSearch = props.value.toLowerCase();
-    if (lowerCaseSearch.length <= 0) {
+    if (lowerCaseSearch.length <= 0 && !props.disableFilter) {
       setAutoComplete([]);
     } else {
       let list = props.options
@@ -230,6 +232,12 @@ function AutoCompleteInput(props: {
         }
         e.preventDefault();
         break;
+      case 'Tab':
+        if (selectedAutoComplete < autoComplete.length) {
+          let tag = autoComplete[selectedAutoComplete].tag;
+          props.setValue(tag);
+        }
+        break;
       case 'ArrowUp':
         if (selectedAutoComplete > 0) {
           setSelectedAutoComplete(selectedAutoComplete - 1);
@@ -257,7 +265,7 @@ function AutoCompleteInput(props: {
     return (
       <div
         key={tag.tag}
-        onClick={() => onSelectTag(tag.tag)}
+        onMouseDown={() => onSelectTag(tag.tag)}
         className={tag.selected ? 'selected' : ''}
       >
         <span>{first}</span>
@@ -294,7 +302,7 @@ function AutoCompleteInput(props: {
 function RecipeRow(props: {
   row: RecipeIngredient;
   setRow: (row: RecipeIngredient) => void;
-  ingredients: string[];
+  ingredients: IngredientWithUnits[];
   units: string[];
   mode: 'add' | 'edit';
   onAction: () => void;
@@ -324,12 +332,15 @@ function RecipeRow(props: {
     });
   };
 
+  const foundIngredient =
+    props.ingredients.find((i) => i.name === props.row.ingredient) ?? null;
+
   return (
     <StyledRow>
       <AutoCompleteInput
         value={props.row.ingredient}
         setValue={setIngredient}
-        options={props.ingredients}
+        options={props.ingredients.map((i) => i.name)}
       />
       <AutoCompleteInput
         value={props.row.option}
@@ -340,7 +351,8 @@ function RecipeRow(props: {
       <AutoCompleteInput
         value={props.row.unit}
         setValue={setUnit}
-        options={props.units}
+        options={foundIngredient?.units ?? props.units}
+        disableFilter={!!foundIngredient}
       />
       <AutoCompleteInput
         value={props.row.amount}
@@ -360,7 +372,7 @@ export function RecipeEditor(props: {
     value: ((prevState: RecipeOptions) => RecipeOptions) | RecipeOptions
   ) => void;
   recipeOptions: RecipeOptions;
-  ingredients: string[];
+  ingredients: IngredientWithUnits[];
   units: string[];
 }) {
   const [editRow, setEditRow] = React.useState({
